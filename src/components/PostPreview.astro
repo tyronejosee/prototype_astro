@@ -1,0 +1,85 @@
+---
+import dayjs from "dayjs";
+
+export interface Props {
+  post: {
+    slug: string;
+    data: {
+      title: string;
+      description: string;
+      pubDate: string;
+      tags: string[];
+      heroImage?: string;
+      author?: string;
+    };
+  };
+}
+
+const { post } = Astro.props;
+const { slug, data } = post;
+const { title, description, pubDate, tags, heroImage, author } = data;
+---
+
+<article
+  class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+>
+  <a href={`/blog/${slug}`} class="block">
+    {
+      heroImage && (
+        <div class="aspect-video overflow-hidden">
+          <img
+            src={heroImage}
+            alt={title}
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      )
+    }
+
+    <div class="p-6">
+      <!-- Tags -->
+      {
+        tags && tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-3">
+            {tags.slice(0, 3).map((tag) => (
+              <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs font-medium">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+
+      <!-- Title -->
+      <h2
+        class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200"
+      >
+        {title}
+      </h2>
+
+      <!-- Description -->
+      <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+        {description}
+      </p>
+
+      <!-- Meta -->
+      <div
+        class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400"
+      >
+        <time datetime={pubDate}>
+          {dayjs(pubDate).format("MMM D, YYYY")}
+        </time>
+        {author && <span>by {author}</span>}
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

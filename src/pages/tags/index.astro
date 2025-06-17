@@ -1,0 +1,84 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+// Get all blog posts and extract tags
+const allPosts = await getCollection("blog");
+const allTags = new Set<string>();
+
+allPosts.forEach((post) => {
+  post.data.tags?.forEach((tag) => allTags.add(tag));
+});
+
+// Count posts per tag
+const tagCounts = new Map<string, number>();
+allPosts.forEach((post) => {
+  post.data.tags?.forEach((tag) => {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  });
+});
+
+// Sort tags by post count (descending)
+const sortedTags = Array.from(allTags).sort(
+  (a, b) => (tagCounts.get(b) || 0) - (tagCounts.get(a) || 0)
+);
+---
+
+<BaseLayout
+  title="All Tags - Prototype Astro"
+  description="Browse all tags and topics covered in our blog posts."
+>
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <header class="text-center mb-12">
+      <h1
+        class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4"
+      >
+        All Tags
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-300">
+        Browse posts by topic and discover new content
+      </p>
+    </header>
+
+    {
+      sortedTags.length > 0 ? (
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {sortedTags.map((tag) => (
+            <a
+              href={`/tags/${tag}`}
+              class="group p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
+            >
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                  #{tag}
+                </h2>
+                <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full text-sm font-medium">
+                  {tagCounts.get(tag)}
+                </span>
+              </div>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mt-2">
+                {tagCounts.get(tag)}{" "}
+                {tagCounts.get(tag) === 1 ? "post" : "posts"}
+              </p>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            No tags found
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400">
+            Tags will appear here once blog posts are published.
+          </p>
+        </div>
+      )
+    }
+  </main>
+
+  <Footer />
+</BaseLayout>

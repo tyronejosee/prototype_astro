@@ -1,0 +1,110 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import PostPreview from "../../../components/PostPreview.astro";
+import Pagination from "../../../components/Pagination.astro";
+
+export async function getStaticPaths({ paginate }) {
+  const POSTS_PER_PAGE = 5;
+  const allPosts = await getCollection("blog");
+  const allTags = new Set<string>();
+
+  // Get all unique tags
+  allPosts.forEach((post) => {
+    post.data.tags?.forEach((tag) => allTags.add(tag));
+  });
+
+  // Generate paths for each tag
+  const paths = [];
+  for (const tag of allTags) {
+    const filteredPosts = allPosts
+      .filter((post) => post.data.tags?.includes(tag))
+      .sort(
+        (a, b) =>
+          new Date(b.data.pubDate).getTime() -
+          new Date(a.data.pubDate).getTime()
+      );
+
+    const paginatedPosts = paginate(filteredPosts, {
+      params: { tag },
+      pageSize: POSTS_PER_PAGE,
+    });
+
+    paths.push(...paginatedPosts);
+  }
+
+  return paths;
+}
+
+const { page } = Astro.props;
+const { tag } = Astro.params;
+const posts = page.data;
+const currentPage = page.currentPage;
+const totalPages = page.lastPage;
+
+const title = `Posts tagged "${tag}" - Page ${currentPage} - Prototype Astro`;
+const description = `Browse all posts tagged with "${tag}". Page ${currentPage} of ${totalPages}.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <header class="mb-12">
+      <div class="flex items-center mb-4">
+        <a
+          href="/tags"
+          class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-200 mr-3"
+        >
+          ← All Tags
+        </a>
+      </div>
+
+      <h1
+        class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4"
+      >
+        Posts tagged with <span class="text-blue-600 dark:text-blue-400"
+          >#{tag}</span
+        >
+      </h1>
+
+      {
+        currentPage > 1 && (
+          <p class="text-gray-600 dark:text-gray-400">
+            Page {currentPage} of {totalPages}
+          </p>
+        )
+      }
+    </header>
+
+    {
+      posts.length > 0 ? (
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <PostPreview post={post} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            No posts found
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400">
+            No posts are tagged with "{tag}".
+          </p>
+        </div>
+      )
+    }
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl={`/tags/${tag}`}
+    />
+  </main>
+
+  <Footer />
+</BaseLayout>

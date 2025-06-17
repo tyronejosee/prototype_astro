@@ -1,0 +1,106 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import dayjs from "dayjs";
+
+export interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    pubDate: string;
+    updatedDate?: string;
+    heroImage?: string;
+    tags: string[];
+    author?: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags, author } =
+  frontmatter;
+---
+
+<BaseLayout title={title} description={description} image={heroImage}>
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <article class="prose prose-lg max-w-none dark:prose-invert">
+      <!-- Hero Image -->
+      {
+        heroImage && (
+          <img
+            src={heroImage}
+            alt={title}
+            class="w-full h-64 sm:h-80 object-cover rounded-lg mb-8"
+          />
+        )
+      }
+
+      <!-- Article Header -->
+      <header class="mb-8">
+        <h1
+          class="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+        >
+          {title}
+        </h1>
+
+        <div
+          class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4"
+        >
+          <time datetime={pubDate}>
+            {dayjs(pubDate).format("MMMM D, YYYY")}
+          </time>
+          {
+            updatedDate && (
+              <span>
+                Updated on{" "}
+                <time datetime={updatedDate}>
+                  {dayjs(updatedDate).format("MMMM D, YYYY")}
+                </time>
+              </span>
+            )
+          }
+          {author && <span>by {author}</span>}
+        </div>
+
+        <!-- Tags -->
+        {
+          tags && tags.length > 0 && (
+            <div class="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <a
+                  href={`/tags/${tag}`}
+                  class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-200"
+                >
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </header>
+
+      <!-- Article Content -->
+      <div class="prose-content">
+        <slot />
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .prose-content :global(pre) {
+    @apply bg-gray-900 dark:bg-gray-800 border border-gray-700;
+  }
+
+  .prose-content :global(code) {
+    @apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm;
+  }
+
+  .prose-content :global(pre code) {
+    @apply bg-transparent p-0;
+  }
+</style>

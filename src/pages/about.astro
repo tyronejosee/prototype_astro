@@ -1,0 +1,149 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "About - Prototype Astro";
+const description =
+  "Learn more about Prototype Astro, a modern blog built with Astro and TailwindCSS.";
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <article class="prose prose-lg max-w-none dark:prose-invert">
+      <header class="text-center mb-12">
+        <h1
+          class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4"
+        >
+          About Prototype Astro
+        </h1>
+      </header>
+
+      <div class="space-y-8">
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Welcome to Our Blog
+          </h2>
+          <p
+            class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed mb-6"
+          >
+            Prototype Astro is a modern, fast, and elegant blog built with
+            cutting-edge web technologies. Our mission is to provide
+            high-quality content about web development, technology trends, and
+            best practices in software engineering.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Built with Modern Technologies
+          </h2>
+          <ul class="space-y-3 text-gray-600 dark:text-gray-300">
+            <li class="flex items-start">
+              <span class="text-blue-600 dark:text-blue-400 mr-3">•</span>
+              <div>
+                <strong>Astro</strong> - The web framework for content-driven websites
+              </div>
+            </li>
+            <li class="flex items-start">
+              <span class="text-blue-600 dark:text-blue-400 mr-3">•</span>
+              <div>
+                <strong>TailwindCSS</strong> - Utility-first CSS framework for rapid
+                UI development
+              </div>
+            </li>
+            <li class="flex items-start">
+              <span class="text-blue-600 dark:text-blue-400 mr-3">•</span>
+              <div>
+                <strong>Markdown</strong> - Simple and powerful content authoring
+              </div>
+            </li>
+            <li class="flex items-start">
+              <span class="text-blue-600 dark:text-blue-400 mr-3">•</span>
+              <div>
+                <strong>Shiki</strong> - Beautiful syntax highlighting for code blocks
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Features
+          </h2>
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+                Lightning Fast
+              </h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm">
+                Built with Astro's island architecture for optimal performance
+                and minimal JavaScript.
+              </p>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+                Dark Mode
+              </h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm">
+                Seamless dark mode toggle with system preference detection and
+                persistent storage.
+              </p>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+                SEO Optimized
+              </h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm">
+                Built-in SEO features with meta tags, Open Graph support, and
+                structured data.
+              </p>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+                Responsive Design
+              </h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm">
+                Mobile-first responsive design that looks great on all devices
+                and screen sizes.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Get In Touch
+          </h2>
+          <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+            Have questions, suggestions, or want to contribute? We'd love to
+            hear from you! Feel free to reach out through our social media
+            channels or submit an issue on GitHub.
+          </p>
+
+          <div class="flex space-x-4 mt-6">
+            <a
+              href="#"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            >
+              Contact Us
+            </a>
+            <a
+              href="#"
+              class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+            >
+              View Source
+            </a>
+          </div>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

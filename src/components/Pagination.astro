@@ -1,0 +1,124 @@
+---
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+const prevPage = currentPage > 1 ? currentPage - 1 : null;
+const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+
+const getPageNumbers = () => {
+  const pages = [];
+  const maxVisible = 5;
+  
+  if (totalPages <= maxVisible) {
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  } else {
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, currentPage + 2);
+    
+    if (currentPage <= 3) {
+      end = Math.min(totalPages, 5);
+    }
+    
+    if (currentPage >= totalPages - 2) {
+      start = Math.max(1, totalPages - 4);
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+  }
+  
+  return pages;
+};
+
+const pages = getPageNumbers();
+---
+
+{totalPages > 1 && (
+  <nav class="flex items-center justify-center space-x-2 mt-12" aria-label="Pagination">
+    <!-- Previous Button -->
+    {prevPage ? (
+      <a 
+        href={`${baseUrl}${prevPage === 1 ? '' : `/${prevPage}`}`}
+        class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+      >
+        Previous
+      </a>
+    ) : (
+      <span class="px-3 py-2 text-sm font-medium text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
+        Previous
+      </span>
+    )}
+    
+    <!-- Page Numbers -->
+    <div class="flex space-x-1">
+      {pages[0] > 1 && (
+        <>
+          <a 
+            href={baseUrl}
+            class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+          >
+            1
+          </a>
+          {pages[0] > 2 && (
+            <span class="px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+              ...
+            </span>
+          )}
+        </>
+      )}
+      
+      {pages.map(page => (
+        page === currentPage ? (
+          <span class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md">
+            {page}
+          </span>
+        ) : (
+          <a 
+            href={`${baseUrl}${page === 1 ? '' : `/${page}`}`}
+            class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+          >
+            {page}
+          </a>
+        )
+      ))}
+      
+      {pages[pages.length - 1] < totalPages && (
+        <>
+          {pages[pages.length - 1] < totalPages - 1 && (
+            <span class="px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+              ...
+            </span>
+          )}
+          <a 
+            href={`${baseUrl}/${totalPages}`}
+            class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+          >
+            {totalPages}
+          </a>
+        </>
+      )}
+    </div>
+    
+    <!-- Next Button -->
+    {nextPage ? (
+      <a 
+        href={`${baseUrl}/${nextPage}`}
+        class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+      >
+        Next
+      </a>
+    ) : (
+      <span class="px-3 py-2 text-sm font-medium text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
+        Next
+      </span>
+    )}
+  </nav>
+)}

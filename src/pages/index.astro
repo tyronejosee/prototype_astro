@@ -1,0 +1,113 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import PostPreview from "../components/PostPreview.astro";
+import Pagination from "../components/Pagination.astro";
+
+const POSTS_PER_PAGE = 5;
+
+// Get current page from URL
+const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
+
+// Get all blog posts
+const allPosts = await getCollection("blog");
+const sortedPosts = allPosts.sort(
+  (a, b) =>
+    new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
+
+// Calculate pagination
+const totalPosts = sortedPosts.length;
+const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+const endIndex = startIndex + POSTS_PER_PAGE;
+const paginatedPosts = sortedPosts.slice(startIndex, endIndex);
+
+// SEO
+const title =
+  currentPage === 1
+    ? "Prototype Astro - Modern Blog with Astro & TailwindCSS"
+    : `Prototype Astro - Page ${currentPage}`;
+const description =
+  "A modern blog built with Astro and TailwindCSS. Featuring markdown support, dark mode, and responsive design.";
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hero Section -->
+    {
+      currentPage === 1 && (
+        <section class="text-center py-16 mb-16">
+          <h1 class="text-4xl sm:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+            Welcome to{" "}
+            <span class="text-blue-600 dark:text-blue-400">
+              Prototype Astro
+            </span>
+          </h1>
+          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+            A modern blog built with Astro and TailwindCSS. Discover articles
+            about web development, technology, and more. Features dark mode,
+            responsive design, and lightning-fast performance.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="#posts"
+              class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+            >
+              Read Latest Posts
+            </a>
+            <a
+              href="/tags"
+              class="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+            >
+              Browse by Tags
+            </a>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- Posts Section -->
+    <section id="posts">
+      {
+        currentPage > 1 && (
+          <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-8">
+            Blog Posts - Page {currentPage}
+          </h1>
+        )
+      }
+
+      {
+        paginatedPosts.length > 0 ? (
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {paginatedPosts.map((post) => (
+              <PostPreview post={post} />
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-16">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              No posts found
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">
+              Check back later for new content!
+            </p>
+          </div>
+        )
+      }
+
+      <!-- Pagination -->
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl=""
+      />
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
